@@ -1,0 +1,931 @@
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --dark: #0d0f18;
+    --darker: #08090f;
+    --white: #ffffff;
+    --muted: rgba(255, 255, 255, 0.38);
+    --accent: #5b58c2;
+    --glass-bg: rgba(255, 255, 255, 0.07);
+    --glass-border: rgba(255, 255, 255, 0.12);
+    --glass-blur: blur(18px);
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: var(--darker);
+    color: var(--white);
+    font-family: "Geist", sans-serif;
+    cursor: none;
+}
+
+.cursor {
+    position: fixed;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    display: flex;
+    place-items: center;
+    transform: translate(-50%, -50%);
+    transition: transform 0.15s ease, width 0.2s ease, height 0.2s ease, background 0.2s ease;
+}
+
+
+/* Custom cusor removed for mobile view */
+
+@media (hover: none) and (pointer: coarse) {
+    .cursor {
+        display: none !important;
+    }
+    html,
+    body {
+        cursor: auto;
+    }
+}
+
+.cursor.expand {
+    width: 36px;
+    height: 36px;
+    background: transparent;
+    border: 1.5px solid var(--white);
+}
+
+.hero {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.hero-video-placeholder {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient( ellipse 80% 60% at 65% 50%, rgba(30, 40, 30, 0.9) 0%, transparent 70%), linear-gradient(135deg, #0d1a10 0%, #0a0d1a 50%, #100d18 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* Fades out once video is ready */
+    opacity: 1;
+    transition: opacity 1.2s ease;
+    z-index: 1;
+}
+
+.hero-video-placeholder.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+
+/* Simulated video grain */
+
+.hero-video-placeholder::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+
+/* ── Hero video ── */
+
+.hero-video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 1.2s ease;
+    z-index: 0;
+}
+
+.hero-video.visible {
+    opacity: 1;
+}
+
+
+/* ── Dark overlay over video for contrast ── */
+
+.hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient( to bottom, rgba(0, 0, 0, 0.45) 0%, rgba(0, 0, 0, 0.2) 50%, rgba(0, 0, 0, 0.55) 100%);
+    z-index: 2;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+}
+
+
+/* ── Cinematic fullscreen mode — fade everything ── */
+
+.navbar,
+.social-sidebar,
+.drop-label,
+.scroll-cue,
+.hero-overlay,
+.cinematic-hint,
+.cursor {
+    transition: opacity 0.4s ease;
+}
+
+body.cinematic .navbar,
+body.cinematic .social-sidebar,
+body.cinematic .drop-label,
+body.cinematic .scroll-cue,
+body.cinematic .hero-overlay {
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
+body.cinematic .menu-overlay {
+    background: linear-gradient( to bottom, rgba(0, 0, 0, 0.45) 0%, rgba(0, 0, 0, 0.2) 50%, rgba(0, 0, 0, 0.55) 100%);
+    transition: opacity 0.4s ease;
+}
+
+.menu-overlay.aboutUs {
+    background-image: url("images/Screenshot (370).png");
+    background-size: contain;
+    background-color: #000;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+
+/* Fullscreen btn stays visible and becomes Exit */
+
+.fullscreen-btn {
+    transition: opacity 0.4s ease, background 0.2s, color 0.2s;
+}
+
+body.cinematic .fullscreen-btn {
+    opacity: 1;
+    pointer-events: all;
+}
+
+
+/* Icon swap: fullscreen ↔ exit */
+
+.fullscreen-btn .icon-fullscreen {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.fullscreen-btn .icon-exit {
+    display: none;
+    align-items: center;
+    gap: 8px;
+}
+
+body.cinematic .fullscreen-btn .icon-fullscreen {
+    display: none;
+}
+
+body.cinematic .fullscreen-btn .icon-exit {
+    display: flex;
+}
+
+
+/* Drop label — improvement: contextualises the video */
+
+.drop-label {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+    pointer-events: none;
+    animation: fadeInUp 1s ease 0.4s both;
+}
+
+.drop-label-logo {
+    width: 68px;
+    opacity: 0.95;
+}
+
+.drop-label-text {
+    font-family: "Halo Grotesk";
+    font-size: clamp(11px, 1.2vw, 14px);
+    letter-spacing: 0.35em;
+    color: rgba(255, 255, 255, 0.45);
+    text-align: center;
+}
+
+.navbar {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100% - 48px);
+    max-width: 1340px;
+    height: 62px;
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    padding: 0 24px;
+    z-index: 100;
+    animation: fadeInDown 0.7s ease both;
+}
+
+.navbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+}
+
+.navbar-logo {
+    width: 30px;
+}
+
+.navbar-wordmark {
+    font-family: "Geist", sans-serif;
+    font-weight: 400;
+    font-size: 15px;
+    letter-spacing: 0.04em;
+    color: var(--white);
+}
+
+
+/* IMPROVEMENT: Drop label in navbar centre */
+
+.navbar-center {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.navbar-drop-pill {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 5px 14px;
+    border: 1px solid var(--glass-border);
+    border-radius: 999px;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    color: rgba(255, 255, 255, 0.7);
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+}
+
+.navbar-drop-pill:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--white);
+}
+
+.navbar-drop-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #5dde80;
+    box-shadow: 0 0 8px #5dde80;
+    animation: pulse 2s ease infinite;
+}
+
+.navbar-right {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.hamburger-btn {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+}
+
+.hamburger-btn svg {
+    display: block;
+    width: 32px;
+    height: auto;
+    fill: var(--white);
+    border-radius: 2px;
+    transition: transform 0.3s, opacity 0.3s, width 0.3s;
+    transform-origin: center;
+}
+
+
+/* ── Social sidebar ── */
+
+.social-sidebar {
+    position: fixed;
+    left: 28px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 64px;
+    z-index: 100;
+    animation: fadeInLeft 0.8s ease 0.3s both;
+}
+
+
+/* IMPROVEMENT: "FOLLOW" rotated label + line */
+
+.social-icon {
+    color: rgba(255, 255, 255, 0.5);
+    transition: color 0.2s, transform 0.2s;
+    display: flex;
+}
+
+.social-icon:hover {
+    color: var(--white);
+    transform: scale(1.15);
+}
+
+.social-icon svg {
+    width: 32px;
+    height: auto;
+    fill: currentColor;
+}
+
+
+/* ── IMPROVEMENT: Fullscreen button as frosted pill ── */
+
+.fullscreen-btn {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    border-radius: 999px;
+    padding: 9px 16px 9px 12px;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    cursor: pointer;
+    z-index: 100;
+    transition: background 0.2s, color 0.2s;
+    animation: fadeInUp 0.7s ease 0.5s both;
+}
+
+.fullscreen-btn:hover {
+    background: rgba(255, 255, 255, 0.12);
+    color: var(--white);
+}
+
+.fullscreen-btn svg {
+    width: 15px;
+    height: 15px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 2;
+}
+
+
+/* ── Scroll cue ── */
+
+.scroll-cue {
+    position: fixed;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    z-index: 100;
+    animation: fadeInUp 0.7s ease 0.7s both;
+}
+
+.scroll-cue span {
+    font-size: 9px;
+    letter-spacing: 0.3em;
+    color: var(--muted);
+    text-transform: uppercase;
+}
+
+.scroll-cue-line {
+    width: 1px;
+    height: 36px;
+    background: linear-gradient( to bottom, rgba(255, 255, 255, 0.25), transparent);
+    animation: scrollPulse 2s ease infinite;
+}
+
+
+/* ── MENU OVERLAY ── */
+
+.menu-overlay {
+    position: fixed;
+    inset: 0;
+    background: var(--dark);
+    z-index: 500;
+    display: flex;
+    flex-direction: column;
+    padding: 0 48px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.45s ease;
+}
+
+.menu-overlay.open {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.menu-topbar {
+    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+}
+
+.menu-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.menu-brand-logo {
+    width: 36px;
+}
+
+.menu-brand-wordmark {
+    font-family: "Urbanist";
+    font-weight: 400;
+    font-size: 16px;
+    letter-spacing: 0.04em;
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.menu-close-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--white);
+    padding: 10px;
+    font-size: 22px;
+    line-height: 1;
+    opacity: 0.7;
+    transition: opacity 0.2s, transform 0.2s;
+}
+
+.menu-close-btn:hover {
+    opacity: 1;
+    transform: rotate(90deg);
+}
+
+
+/* menu-body is defined in shop preview section above */
+
+.menu-nav {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    /* IMPROVEMENT: tighter inner group, wider gap before BAG */
+    gap: 0;
+}
+
+.menu-nav li {
+    overflow: hidden;
+}
+
+
+/* IMPROVEMENT: Consistent muted colour for all inactive, no opacity cascade */
+
+.menu-nav a {
+    display: inline-flex;
+    align-items: center;
+    gap: 16px;
+    font-family: "Halo Grotesk";
+    font-size: clamp(52px, 7vw, 88px);
+    line-height: 1;
+    padding: 6px 0;
+    text-decoration: none;
+    color: rgba(255, 255, 255, 0.28);
+    letter-spacing: 0.04em;
+    transition: color 0.25s ease;
+    position: relative;
+}
+
+.menu-nav a:hover {
+    color: var(--white);
+}
+
+
+/* Active state */
+
+.menu-nav a.active {
+    color: var(--white);
+}
+
+.menu-nav a.active .nav-swoosh {
+    display: block;
+}
+
+.nav-swoosh {
+    display: none;
+    position: absolute;
+    left: 0;
+    bottom: 4px;
+    width: 100%;
+    pointer-events: none;
+}
+
+
+/* Spacer before BAG — IMPROVEMENT: visual grouping */
+
+.menu-nav li.spacer {
+    height: 28px;
+}
+
+
+/* IMPROVEMENT: NEW DROP with red dot indicator */
+
+.nav-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-family: "Geist", sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.55);
+    padding: 4px 10px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 999px;
+    vertical-align: middle;
+    position: relative;
+    top: -8px;
+    transition: color 0.2s;
+}
+
+.menu-nav a:hover .nav-badge {
+    color: var(--white);
+    border-color: rgba(255, 255, 255, 0.4);
+}
+
+.nav-badge-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #ff4545;
+    box-shadow: 0 0 8px #ff4545;
+    animation: pulse 2s ease infinite;
+}
+
+
+/* IMPROVEMENT: "BAG" instead of MY-CART */
+
+.menu-nav li.bag-item {
+    margin-top: 0;
+}
+
+
+/* Menu bottom row */
+
+.menu-footer {
+    padding-bottom: 40px;
+    display: flex;
+    align-items: center;
+    gap: 32px;
+}
+
+.menu-footer a {
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    color: var(--muted);
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: color 0.2s;
+}
+
+.menu-footer a:hover {
+    color: var(--white);
+}
+
+
+/* ── SHOP PREVIEW PANEL ── */
+
+.menu-body {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 0;
+    overflow: hidden;
+    position: relative;
+}
+
+.menu-nav-wrap {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    transition: transform 0.55s cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+.shop-preview {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 55%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0;
+    opacity: 0;
+    transform: translateX(40px);
+    pointer-events: none;
+    transition: opacity 0.5s ease, transform 0.55s cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+.shop-preview.visible {
+    opacity: 1;
+    transform: translateX(0);
+    pointer-events: all;
+}
+
+
+/* Eyebrow label */
+
+.shop-preview-label {
+    font-family: "Geist", sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 18px;
+    padding-left: 4px;
+}
+
+
+/* The scrolling columns container */
+
+.shop-columns {
+    display: flex;
+    gap: 10px;
+    height: 72vh;
+    overflow: hidden;
+    border-radius: 16px;
+    -webkit-mask-image: linear-gradient( to bottom, transparent 0%, black 8%, black 92%, transparent 100%);
+    mask-image: linear-gradient( to bottom, transparent 0%, black 8%, black 92%, transparent 100%);
+}
+
+.shop-col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    will-change: transform;
+}
+
+
+/* col 1 & 3 scroll up, col 2 scrolls down */
+
+.shop-col-1 {
+    animation: shopScrollUp 22s linear infinite;
+}
+
+.shop-col-2 {
+    animation: shopScrollDown 26s linear infinite;
+}
+
+.shop-col-3 {
+    animation: shopScrollUp 18s linear infinite;
+}
+
+
+/* Pause all columns while not hovering Shop */
+
+.shop-col {
+    animation-play-state: paused;
+}
+
+.shop-preview.visible .shop-col {
+    animation-play-state: running;
+}
+
+@keyframes shopScrollUp {
+    from {
+        transform: translateY(0);
+    }
+    to {
+        transform: translateY(-50%);
+    }
+}
+
+@keyframes shopScrollDown {
+    from {
+        transform: translateY(-50%);
+    }
+    to {
+        transform: translateY(0);
+    }
+}
+
+.shop-card {
+    flex-shrink: 0;
+    border-radius: 10px;
+    overflow: hidden;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    position: relative;
+    cursor: pointer;
+}
+
+.shop-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.4s ease;
+}
+
+.shop-card:hover img {
+    transform: scale(1.05);
+}
+
+
+/* Subtle product name tag on hover */
+
+.shop-card-tag {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 24px 12px 10px;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.75) 0%, transparent 100%);
+    font-family: "Geist", sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    color: rgba(255, 255, 255, 0.85);
+    text-transform: uppercase;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+}
+
+.shop-card:hover .shop-card-tag {
+    opacity: 1;
+}
+
+
+/* Card height variants */
+
+.sh-sm {
+    height: 160px;
+}
+
+.sh-md {
+    height: 200px;
+}
+
+.sh-lg {
+    height: 250px;
+}
+
+.sh-xl {
+    height: 300px;
+}
+
+
+/* Thin divider between nav and preview */
+
+.shop-divider {
+    position: absolute;
+    left: 44%;
+    top: 10%;
+    bottom: 10%;
+    width: 1px;
+    background: linear-gradient( to bottom, transparent, var(--glass-border) 30%, var(--glass-border) 70%, transparent);
+    opacity: 0;
+    transition: opacity 0.5s ease 0.15s;
+}
+
+.shop-divider.visible {
+    opacity: 1;
+}
+
+
+/* ── Keyframes ── */
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-16px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-12px) translateY(-50%);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0) translateY(-50%);
+    }
+}
+
+@keyframes scrollPulse {
+    0%,
+    100% {
+        opacity: 0.4;
+    }
+    50% {
+        opacity: 1;
+    }
+}
+
+@keyframes pulse {
+    0%,
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.4);
+        opacity: 0.6;
+    }
+}
+
+
+/* Menu item stagger */
+
+.menu-overlay.open .menu-nav li:nth-child(1) a {
+    animation: slideIn 0.5s ease 0.05s both;
+}
+
+.menu-overlay.open .menu-nav li:nth-child(2) a {
+    animation: slideIn 0.5s ease 0.12s both;
+}
+
+.menu-overlay.open .menu-nav li:nth-child(3) a {
+    animation: slideIn 0.5s ease 0.18s both;
+}
+
+.menu-overlay.open .menu-nav li:nth-child(4) a {
+    animation: slideIn 0.5s ease 0.24s both;
+}
+
+.menu-overlay.open .menu-nav li:nth-child(5) a {
+    animation: slideIn 0.5s ease 0.3s both;
+}
+
+.menu-overlay.open .menu-nav li:nth-child(6) a {
+    animation: slideIn 0.5s ease 0.35s both;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
