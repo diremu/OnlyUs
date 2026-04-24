@@ -5,18 +5,18 @@ function Cursor() {
     cursor.style.left = e.clientX + "px";
     cursor.style.top = e.clientY + "px";
   });
-  document.querySelectorAll("a, button, .navbar-drop-pill").forEach((el) => {
-    el.addEventListener(
-      "mouseenter",
-      () => cursor.classList.add("expand"),
-      (cursorMainLogo.style.opacity = 0),
-    );
-    el.addEventListener(
-      "mouseleave",
-      () => cursor.classList.remove("expand"),
-      (cursorMainLogo.style.opacity = 1),
-    );
-  });
+  // document.querySelectorAll("a, button, .navbar-drop-pill").forEach((el) => {
+  //   el.addEventListener(
+  //     "mouseenter",
+  //     () => cursor.classList.add("expand"),
+  //     (cursorMainLogo.style.opacity = 0),
+  //   );
+  //   el.addEventListener(
+  //     "mouseleave",
+  //     () => cursor.classList.remove("expand"),
+  //     (cursorMainLogo.style.opacity = 1),
+  //   );
+  // });
 
   return (
     <svg
