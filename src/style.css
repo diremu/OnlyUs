@@ -17,6 +17,11 @@
     --glass-blur: blur(18px);
 }
 
+@font-face{
+    font-family: "Bebas Neue";
+    src: url("/assets/fonts/BebasNeue-Regular.ttf") format("truetype");
+}
+
 html,
 body {
     width: 100%;
@@ -24,8 +29,8 @@ body {
     overflow: hidden;
     background: var(--darker);
     color: var(--white);
-    font-family: "Geist", sans-serif;
     cursor: none;
+    font-family: "Bebas Neue";
 }
 
 .cursor {
@@ -41,6 +46,9 @@ body {
     transition: transform 0.15s ease, width 0.2s ease, height 0.2s ease, background 0.2s ease;
 }
 
+a:hover, button:hover, .navbar-drop-pill:hover {
+    cursor: none;
+}
 
 /* Custom cusor removed for mobile view */
 
@@ -55,8 +63,8 @@ body {
 }
 
 .cursor.expand {
-    width: 36px;
-    height: 36px;
+    width: 25px;
+    height: 25px;
     background: transparent;
     border: 1.5px solid var(--white);
 }
@@ -259,7 +267,7 @@ body.cinematic .fullscreen-btn .icon-exit {
 }
 
 .navbar-wordmark {
-    font-family: "Geist", sans-serif;
+    /* font-family: "Geist", sans-serif; */
     font-weight: 400;
     font-size: 15px;
     letter-spacing: 0.04em;

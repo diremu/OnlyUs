@@ -1,5 +1,6 @@
 import "../style.css";
 import { Outlet } from "react-router";
+import Cursor from "./Cursor";
 
 const Navbar = () => {
   return (
@@ -70,6 +71,7 @@ const Navbar = () => {
           </button>
         </div>
       </nav>
+      <Cursor />
       <Outlet></Outlet>
     </>
   );
