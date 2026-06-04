@@ -47,3 +47,9 @@ export const shopItems = [{
         name: "Red Skullcap",
     },
 ];
+
+export const colDefs = [
+    { cls: "shop-col shop-col-1", items: [0, 3, 6, 9], heights: ["sh-lg", "sh-md", "sh-xl", "sh-sm"] },
+    { cls: "shop-col shop-col-2", items: [1, 4, 7, 10], heights: ["sh-md", "sh-xl", "sh-sm", "sh-lg"] },
+    { cls: "shop-col shop-col-3", items: [2, 5, 8, 11], heights: ["sh-xl", "sh-sm", "sh-lg", "sh-md"] },
+];

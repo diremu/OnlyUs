@@ -1,73 +1,87 @@
 import "../style.css";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 const Home = () => {
-  let [isCinematic, setIsCinematic] = useState(false);
-  let body;
+  const [isCinematic, setIsCinematic] = useState(false);
+  const [isVideoVisible, setIsVideoVisible] = useState(false);
 
-  function enterCinematic() {
-    setIsCinematic(true)
-    body.classList.add("cinematic");
+  const enterCinematic = () => {
     if (document.documentElement.requestFullscreen) {
-      document.documentElement.requestFullscreen().catch(() => {});
+      document.documentElement
+        .requestFullscreen()
+        .then(() => setIsCinematic(true))
+        .catch((err) => console.error("Error entering fullscreen:", err));
+    } else {
+      setIsCinematic(true); // Fallback if API isn't supported
     }
-  }
+  };
 
-  function exitCinematic() {
-    setIsCinematic(false)
-    body.classList.remove("cinematic");
+  const exitCinematic = () => {
     if (document.fullscreenElement && document.exitFullscreen) {
-      document.exitFullscreen();
+      document
+        .exitFullscreen()
+        .then(() => setIsCinematic(false))
+        .catch((err) => console.error("Error exiting fullscreen:", err));
+    } else {
+      setIsCinematic(false);
     }
-  }
-
-  document.addEventListener("fullscreenchange", () => {
-    if (!document.fullscreenElement && isCinematic) exitCinematic();
-  });
-
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && isCinematic) exitCinematic();
-  });
-
+  };
   useEffect(() => {
-    const heroVideo = document.getElementById("heroVideo");
-    const heroPlaceholder = document.getElementById("heroPlaceholder");
-    body = document.getElementById("container");
-    const fullscreenBtn = document.getElementById("fullscreenBtn");
-    console.log(body)
+    const handleFullscreenChange = () => {
+      setIsCinematic(!!document.fullscreenElement);
+    };
 
-    function revealVideo() {
-      heroVideo.classList.add("visible");
-      heroPlaceholder.classList.add("hidden");
-    }
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape" && isCinematic) {
+        exitCinematic();
+      }
+    };
 
-    if (heroVideo.src && heroVideo.src !== window.location.href) {
-      heroVideo.addEventListener("canplaythrough", revealVideo, {
-        once: true,
-      });
-      setTimeout(() => {
-        if (!heroPlaceholder.classList.contains("hidden")) revealVideo();
-      }, 5000);
-    }
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+    document.addEventListener("keydown", handleKeyDown);
 
-    document.querySelector(".hero").addEventListener("click", () => {
-      if (isCinematic) exitCinematic();
-    });
-  }, [document.readyState != "interactive"]);
+    return () => {
+      document.removeEventListener("fullscreenchange", handleFullscreenChange);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isCinematic]);
+
+  // 2. Safety fallback timer to reveal video if 'canplaythrough' takes too long
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsVideoVisible(true);
+    }, 5000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  const toggleCinematic = () => {
+    isCinematic ? exitCinematic() : enterCinematic();
+  };
+
+  const handleHeroClick = () => {
+    if (isCinematic) exitCinematic();
+  };
+
   return (
-    <div id="container" className={`${isCinematic ? 'cinematic' : ''} `}>
-      <div className="hero">
+    <div id="container" className={isCinematic ? "cinematic" : ""}>
+      {/* Hero Section */}
+      <div className="hero" onClick={handleHeroClick}>
         <video
           id="heroVideo"
-          className="hero-video"
+          className={`hero-video ${isVideoVisible ? "visible" : ""}`}
           autoPlay
           muted
           loop
           playsInline
           src="assets/Bolapsd.mp4"
+          onCanPlayThrough={() => setIsVideoVisible(true)}
         />
 
-        <div className="hero-video-placeholder" id="heroPlaceholder"></div>
+        <div
+          id="heroPlaceholder"
+          className={`hero-video-placeholder ${isVideoVisible ? "hidden" : ""}`}
+        ></div>
 
         <div className="hero-overlay"></div>
 
@@ -89,14 +103,13 @@ const Home = () => {
           <span className="drop-label-text">US! NEVER THEM</span>
         </div>
       </div>
+
       {/* Full screen button */}
       <button
         className="fullscreen-btn"
         id="fullscreenBtn"
         aria-label="Fullscreen"
-        onClick={() => {
-          isCinematic ? exitCinematic() : enterCinematic();
-        }}
+        onClick={toggleCinematic}
       >
         <span className="icon-fullscreen">
           <svg viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
@@ -117,6 +130,7 @@ const Home = () => {
           Exit
         </span>
       </button>
+
       {/* Socials sidebar */}
       <aside className="social-sidebar">
         <a href="#" className="social-icon" aria-label="Instagram">
@@ -135,7 +149,7 @@ const Home = () => {
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="512"
-            length="512"
+            height="512"
             viewBox="0 0 512 512"
           >
             <g>
