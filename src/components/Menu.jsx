@@ -102,7 +102,7 @@ const Menu = ({ isOpen, onClose }) => {
 
             <li>
               <a
-                href="#"
+                href="/about"
                 onMouseEnter={() => setIsAboutUsActive(true)}
                 onMouseLeave={() => setIsAboutUsActive(false)}
               >

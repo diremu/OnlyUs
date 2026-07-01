@@ -1,11 +1,10 @@
 import React, { useState } from "react";
 import { Outlet } from "react-router";
-import Menu from "./Menu"; // Ensure path maps correctly to your components folder
+import Menu from "./Menu";
 import Cursor from "./Cursor";
 import "../style.css";
 
 const Navbar = () => {
-  // Lift visibility state here to control the child overlay
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
