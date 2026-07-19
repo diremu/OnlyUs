@@ -171,15 +171,11 @@ body.cinematic .menu-overlay {
 }
 
 .menu-overlay.aboutUs {
-    background-image: url("images/Screenshot (370).png");
-    background-size: contain;
-    background-color: #000;
+    background-image: url("assets/images/logo-black.jpg");
+    background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
 }
-
-
-/* Fullscreen btn stays visible and becomes Exit */
 
 .fullscreen-btn {
     transition: opacity 0.4s ease, background 0.2s, color 0.2s;
@@ -941,4 +937,29 @@ body.cinematic .fullscreen-btn .icon-exit {
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+/* About Page section */
+.about-container {
+    margin: 10vh 3vw 0vh;
+}
+
+.about-title {
+    font-size: 36px;
+    text-align: center;
+    padding: 10px 0;
+    letter-spacing: 4px;
+}
+
+.about-text {
+    padding: 0 20px;
+    text-transform: none;
+    font-family: Urbanist, 'New Times Roman';
+}
+
+.about-title-container {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    justify-content: center
 }

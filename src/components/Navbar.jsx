@@ -10,7 +10,7 @@ const Navbar = () => {
   return (
     <>
       <nav className="navbar">
-        <a className="navbar-brand" href="#">
+        <a className="navbar-brand" href="/">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="83.01 90.22 333.18 311.13"
@@ -25,7 +25,7 @@ const Navbar = () => {
               <path d="M 195.30 342.31 C 193.86 341.88 186.52 340.55 186.69 339.72 C 186.86 338.90 194.88 336.93 196.32 337.36 C 197.75 337.80 195.47 341.49 195.30 342.31 Z"></path>
             </g>
           </svg>
-          <span className="navbar-wordmark">Only us</span>
+          <span className="navbar-wordmark">Only Us</span>
         </a>
 
         <div className="navbar-center">
