@@ -2,8 +2,7 @@ const About = () => {
   return (
     <div className="about-container">
       <section>
-        <div className="about-title-container">
-          <img className="about-image" src='assets/images/logo-black.jpg'/>
+        <div className="about-title-container about-title-container--ornate">
           <div className="about-title">Our Origins</div>
         </div>
         <p className="about-text">
@@ -15,8 +14,7 @@ const About = () => {
       </section>
 
       <section>
-        <div className='about-title-container'>
-          <img className="about-image" src='assets/images/logo-black.jpg'/>
+        <div className='about-title-container about-title-container--plain'>
           <div className="about-title">Ambitions and Goals</div>
         </div>
       </section>
